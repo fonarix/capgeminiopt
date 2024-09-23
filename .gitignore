@@ -1,3 +1,9 @@
+# Visual Studio
+.vs
+
+# Build folders:
+winsimd/build
+
 # Prerequisites
 *.d
 
