@@ -48,6 +48,8 @@ add_executable(${PROJECT_APP_NAME}
     "${SRC_LIST}"
 )
 
+target_compile_features(${PROJECT_APP_NAME} PRIVATE cxx_std_17)
+
 if (MSVC)
     #target_compile_options(${PROJECT_APP_NAME} PRIVATE "/FA /FaListingFile.asm")
     target_compile_options(${PROJECT_APP_NAME} PRIVATE "/FA") # listing
@@ -57,10 +59,18 @@ if (MSVC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX512")
+elseif(ARCH_AMD64)
+elseif(LINUX)
+    #https://github.com/clickhouse/clickhouse/blob/master/cmake/cpu_features.cmake
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -mavx -mavx2 -mavx512f")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=skylake-avx512")
+
+
 endif()
 
 
-target_compile_features(${PROJECT_APP_NAME} PRIVATE cxx_std_17)
 
 
 

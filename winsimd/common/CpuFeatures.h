@@ -6,7 +6,8 @@
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
-#include <x86intrin.h>
+//#include <x86intrin.h>
+//#include <stdio.h>
 //#include <mm_malloc.h>
 #endif
 
@@ -23,17 +24,62 @@ const unsigned      kCpuFeatureSSE41 = 16;
 const unsigned      kCpuFeatureSSE42 = 32;
 const unsigned      kCpuFeatureAVX = 64;
 const unsigned      kCpuFeatureAVX2 = 128;
-const unsigned      kCpuFeatureAVX512 = 256;
+const unsigned      kCpuFeatureAVX512 = 256; // https://stackoverflow.com/questions/6121792/how-to-check-if-a-cpu-supports-the-sse3-instruction-set
 
 #if defined(__GNUC__) || defined(__clang__)
 
 inline unsigned GetCpuFeatures()
 {
+    unsigned resultFlags = 0;
+    __builtin_cpu_init();
+//    https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/X86-Built-in-Functions.html
     if (__builtin_cpu_supports("sse"))
     {
-
+        resultFlags |= kCpuFeatureSSE;
     }
-#error not implemented
+    if (__builtin_cpu_supports("sse2"))
+    {
+        resultFlags |= kCpuFeatureSSE2;
+    }
+    if (__builtin_cpu_supports("sse3"))
+    {
+        resultFlags |= kCpuFeatureSSE3;
+    }
+    if (__builtin_cpu_supports("ssse3"))
+    {
+        resultFlags |= kCpuFeatureSSSE3;
+    }
+    if (__builtin_cpu_supports("sse4.1"))
+    {
+        resultFlags |= kCpuFeatureSSE41;
+    }
+    if (__builtin_cpu_supports("sse4.2"))
+    {
+        resultFlags |= kCpuFeatureSSE42;
+    }
+    if (__builtin_cpu_supports("avx"))
+    {
+        resultFlags |= kCpuFeatureAVX;
+    }
+    if (__builtin_cpu_supports("avx2"))
+    {
+        resultFlags |= kCpuFeatureAVX2;
+    }
+    if (__builtin_cpu_supports("avx512f")) // https://stackoverflow.com/questions/6121792/how-to-check-if-a-cpu-supports-the-sse3-instruction-set
+    {
+        resultFlags |= kCpuFeatureAVX512;
+    }
+
+    if (__builtin_cpu_is("amd"))
+    {
+        //std::cout << "amd" << std::endl;
+    }
+    if (__builtin_cpu_is("corei7"))
+    {
+        //std::cout << "corei7" << std::endl;
+    }
+
+    return resultFlags;
 }
 
 #elif _MSC_VER
@@ -94,41 +140,30 @@ inline unsigned GetCpuFeatures()
 
 inline const char* CpuFeatureFlagToString(unsigned flag)
 {
-    if (flag == kCpuFeatureSSE) { return "SSE"; }
-    if (flag == kCpuFeatureSSE2) { return "SSE2"; }
-    if (flag == kCpuFeatureSSE3) { return "SSE3"; }
-    if (flag == kCpuFeatureSSSE3) { return "SSSE3"; }
-    if (flag == kCpuFeatureSSE41) { return "SSE41"; }
-    if (flag == kCpuFeatureSSE42) { return "SSE42"; }
-    if (flag == kCpuFeatureAVX) { return "AVX"; }
-    if (flag == kCpuFeatureAVX2) { return "AVX2"; }
-    if (flag == kCpuFeatureAVX512) { return "AVX512"; }
+    if (flag == kCpuFeatureSSE)   { return "SSE";    }
+    if (flag == kCpuFeatureSSE2)  { return "SSE2";   }
+    if (flag == kCpuFeatureSSE3)  { return "SSE3";   }
+    if (flag == kCpuFeatureSSSE3) { return "SSSE3";  }
+    if (flag == kCpuFeatureSSE41) { return "SSE41";  }
+    if (flag == kCpuFeatureSSE42) { return "SSE42";  }
+    if (flag == kCpuFeatureAVX)   { return "AVX";    }
+    if (flag == kCpuFeatureAVX2)  { return "AVX2";   }
+    if (flag == kCpuFeatureAVX512){ return "AVX512"; }
     return "";
 }
 
 inline void PrintCpuFeatures(unsigned flags)
 {
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE2) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE3) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSSE3) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE41) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE42) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureAVX) << std::endl;
-    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureAVX2) << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE)    << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE2)   << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE3)   << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSSE3)  << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE41)  << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureSSE42)  << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureAVX)    << std::endl;
+    std::cout << CpuFeatureFlagToString(flags & kCpuFeatureAVX2)   << std::endl;
     std::cout << CpuFeatureFlagToString(flags & kCpuFeatureAVX512) << std::endl;
 }
 
 
-void A111lignedFree(void* inPtr)
-{
-#if _WIN32
-    //_mm_free(inPtr);
-    //_aligned_free(inPtr);
-#elif __linux__
-    _aligned_free(inPtr);
-#endif
-}
-
-
-#endif __CpuFeatures_h__
+#endif //__CpuFeatures_h__

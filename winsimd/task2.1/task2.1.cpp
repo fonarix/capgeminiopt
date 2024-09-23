@@ -14,10 +14,10 @@ void RunInt32AlignedTests()
     PrintCpuFeatures(cpuFlags);
 
     //
-    constexpr size_t VECTOR_SIZE = 100'000'000; // 100 millions
+    constexpr std::size_t VECTOR_SIZE = 100'000'000; // 100 millions
 
     // Align alloc
-    constexpr size_t alignment = 64; // Use max align for AVX-512
+    constexpr std::size_t alignment = 64; // Use max align for AVX-512
     std::int32_t* a = AlignedArrayAlloc<std::int32_t>(VECTOR_SIZE, alignment);
     CheckAlign(a, alignment);
     std::int32_t* b = AlignedArrayAlloc<std::int32_t>(VECTOR_SIZE, alignment);

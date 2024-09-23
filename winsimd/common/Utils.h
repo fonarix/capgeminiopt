@@ -4,12 +4,13 @@
 #include <sstream>
 #include <iomanip>
 #include <chrono>
+#include <array>
 
 
 /*
  * Returns incrmental array
  */
-template <typename T, size_t size>
+template <typename T, std::size_t size>
 inline
 std::array<T, size> GenArrayArithmeticProgression(T inStartValue = 0, T inStepValue = 1)
 {
@@ -24,10 +25,10 @@ std::array<T, size> GenArrayArithmeticProgression(T inStartValue = 0, T inStepVa
 }
 
 template <typename T>
-//inline
-void FillArrayArithmeticProgression(T* ioArray, size_t inItemsCount, T inStartValue = 0, T inStepValue = 1)
+inline
+void FillArrayArithmeticProgression(T* ioArray, std::size_t inItemsCount, T inStartValue = 0, T inStepValue = 1)
 {
-    for (size_t i = 0; i < inItemsCount; ++i)
+    for (std::size_t i = 0; i < inItemsCount; ++i)
     {
         ioArray[i] = inStartValue + i * inStepValue;
     }
@@ -35,7 +36,7 @@ void FillArrayArithmeticProgression(T* ioArray, size_t inItemsCount, T inStartVa
     return;
 }
 
-template <typename T, size_t size>
+template <typename T, std::size_t size>
 void PrintArray(const T(&array)[size])
 {
     for (size_t i = 0; i < size; ++i)
@@ -43,7 +44,7 @@ void PrintArray(const T(&array)[size])
 }
 
 template <typename T>
-void PrintArray(const T *inArray, size_t inItemsCount)
+void PrintArray(const T *inArray, std::size_t inItemsCount)
 {
     std::cout << std::endl << std::setfill(' ');
     for (size_t i = 0; i < inItemsCount; ++i)
@@ -53,10 +54,10 @@ void PrintArray(const T *inArray, size_t inItemsCount)
 }
 
 template <>
-void PrintArray(const float* inArray, size_t inItemsCount)
+void PrintArray(const float* inArray, std::size_t inItemsCount)
 {
     std::cout << std::endl << std::setfill(' ') << std::setprecision(4);
-    for (size_t i = 0; i < inItemsCount; ++i)
+    for (std::size_t i = 0; i < inItemsCount; ++i)
     {
         //std::setprecision(std::numeric_limits<double>::digits10 + 1)
         //std::cout << std::setw(4) << std::scientific << inArray[i];
@@ -106,7 +107,7 @@ public:
     inline void PrintElapsed()//const char*prefix, const char* postfix)
     {
         const char* prefix = "Elapsed: ";
-        const char* postfix = " [ns]"; // "[µs]"
+        const char* postfix = " [ns]"; // "[ï¿½s]"
         std::cout
             << std::endl
             << prefix //"Time difference = "
@@ -117,13 +118,13 @@ public:
 };
 
 //using CTimerNanoseconds = TTimer<double>;
-using CTimerNanoseconds = TTimer;
+using CTimerNanoseconds = TTimer<std::chrono::nanoseconds>;
 using CTimerMicroseconds = TTimer<std::chrono::microseconds>;
 
 
 // measure execution time numRepeats times, and return avetage value
-template <size_t numRepeats, typename Func, typename T>
-double MeasureTimeFunc2VecAdd(Func func, const T* a, const T* b, T* c, size_t size) {
+template <std::size_t numRepeats, typename Func, typename T>
+double MeasureTimeFunc2VecAdd(Func func, const T* a, const T* b, T* c, std::size_t size) {
     double totalTime = 0.0;
     for (size_t i = 0; i < numRepeats; ++i)
     {
@@ -136,10 +137,10 @@ double MeasureTimeFunc2VecAdd(Func func, const T* a, const T* b, T* c, size_t si
     return totalTime / numRepeats; // return average
 }
 // measure execution time numRepeats times, and return avetage value
-template <size_t numRepeats, typename Func, typename T>
-double MeasureTimeFunc2VecDot(Func func, const T* a, const T* b, T* c, size_t size) {
+template <std::size_t numRepeats, typename Func, typename T>
+double MeasureTimeFunc2VecDot(Func func, const T* a, const T* b, T* c, std::size_t size) {
     double totalTime = 0.0;
-    for (size_t i = 0; i < numRepeats; ++i)
+    for (std::size_t i = 0; i < numRepeats; ++i)
     {
         const auto start = std::chrono::high_resolution_clock::now();
         *c = func(a, b, size);
@@ -150,20 +151,30 @@ double MeasureTimeFunc2VecDot(Func func, const T* a, const T* b, T* c, size_t si
     return totalTime / numRepeats; // return average
 }
 
-void* AlignedAlloc(size_t inSize, size_t inAlignment)
+void* AlignedAlloc(std::size_t inSize, std::size_t inAlignment)
 {
 #if _WIN32
     //return _mm_malloc(inSize, inAlignment);
     return _aligned_malloc(inSize, inAlignment);
 #elif __linux__
-    return or posix_memalign(inSize, inAlignment);
+    void* memPtr = nullptr;
+    int result = posix_memalign(&memPtr, inAlignment, inSize);
+    if (EINVAL == result)
+    {
+        return nullptr;
+    }
+    if (ENOMEM == result)
+    {
+        return nullptr;
+    }
+    return memPtr;
 #endif
 }
 
 template<class T>
-T* AlignedArrayAlloc(size_t inCount, size_t inAlignment)
+T* AlignedArrayAlloc(std::size_t inCount, std::size_t inAlignment)
 {
-    const size_t size = inCount * sizeof(T);
+    const std::size_t size = inCount * sizeof(T);
 #if defined(_MSC_VER)
     return static_cast<T*>(_aligned_malloc(size, inAlignment));
 #else
@@ -171,10 +182,10 @@ T* AlignedArrayAlloc(size_t inCount, size_t inAlignment)
 #endif
 }
 
-bool IsAligned(const void* inPtr, size_t inAlignment)
+bool IsAligned(const void* inPtr, std::size_t inAlignment)
 {
-    const size_t address = reinterpret_cast<size_t>(inPtr);
-    const size_t rest = address % inAlignment;
+    const std::size_t address = reinterpret_cast<size_t>(inPtr);
+    const std::size_t rest = address % inAlignment;
     if (0 == rest)
     {
         return true;
@@ -183,7 +194,7 @@ bool IsAligned(const void* inPtr, size_t inAlignment)
 }
 
 template<typename T>
-void CheckAlign(T* ptr, size_t align)
+void CheckAlign(T* ptr, std::size_t align)
 {
     std::cout << "Pointer " << ptr;
     if (IsAligned(ptr, align))
@@ -201,14 +212,14 @@ void AlignedArrayFree(void* inPtr)
     //_mm_free(inPtr);
     _aligned_free(inPtr);
 #elif __linux__
-    _aligned_free(inPtr);
+    free(inPtr); // free mem after posix_memalign
 #endif
 }
 
 template<class T>
 T* ArrayAlloc(size_t inCount)
 {
-    const size_t size = inCount * sizeof(T);
+    const std::size_t size = inCount * sizeof(T);
     return static_cast<T*>(malloc(size));
 }
 

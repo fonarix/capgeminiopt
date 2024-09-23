@@ -13,10 +13,10 @@ void RunWithStdVector()
     auto cpuFlags = GetCpuFeatures();
     PrintCpuFeatures(cpuFlags);
     //
-    constexpr size_t VECTOR_SIZE = 100'000'000; // 100 millions
+    constexpr std::size_t VECTOR_SIZE = 100'000'000; // 100 millions
 
     // Align alloc
-    constexpr size_t alignment = 16;
+    constexpr std::size_t alignment = 16;
     auto a = std::vector<int>(VECTOR_SIZE);
     CheckAlign(a.data(), alignment);
     auto b = std::vector<int>(VECTOR_SIZE);
@@ -65,10 +65,10 @@ void Run()
     PrintCpuFeatures(cpuFlags);
 
     //
-    constexpr size_t VECTOR_SIZE = 100'000'000; // 100 millions
+    constexpr std::size_t VECTOR_SIZE = 100'000'000; // 100 millions
 
     // Align alloc
-    constexpr size_t alignment = 16; // Use max align for AVX-512
+    constexpr std::size_t alignment = 16; // Use max align for AVX-512
     int* a = ArrayAlloc<int>(VECTOR_SIZE);
     CheckAlign(a, alignment);
     int* b = ArrayAlloc<int>(VECTOR_SIZE);

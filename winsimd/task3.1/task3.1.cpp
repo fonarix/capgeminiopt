@@ -14,10 +14,10 @@ void RunAddFloatAlignedTests()
     PrintCpuFeatures(cpuFlags);
 
     //
-    constexpr size_t VECTOR_SIZE = 100'000'000; // 100 millions
+    constexpr std::size_t VECTOR_SIZE = 100'000'000; // 100 millions
 
     // Align alloc
-    constexpr size_t alignment = 64; // Use max align for AVX-512
+    constexpr std::size_t alignment = 64; // Use max align for AVX-512
     float* a = AlignedArrayAlloc<float>(VECTOR_SIZE, alignment);
     CheckAlign(a, alignment);
     float* b = AlignedArrayAlloc<float>(VECTOR_SIZE, alignment);
@@ -70,11 +70,11 @@ void RunDotProductUnalignedTests()
 {
     std::cout << std::endl << __FUNCTION__ << std::endl;
 
-    //constexpr size_t VECTOR_SIZE = 10'000'000; // 10 millions
-    constexpr size_t VECTOR_SIZE = 1'000'000; // 1 million
+    //constexpr std::size_t VECTOR_SIZE = 10'000'000; // 10 millions
+    constexpr std::size_t VECTOR_SIZE = 1'000'000; // 1 million
 
     // Align alloc
-    constexpr size_t alignment = 32;
+    constexpr std::size_t alignment = 32;
     float* a = ArrayAlloc<float>(VECTOR_SIZE);
     CheckAlign(a, alignment);
     float* b = ArrayAlloc<float>(VECTOR_SIZE);
@@ -135,11 +135,11 @@ void RunDotProductAlignedTests()
 {
     std::cout << std::endl << __FUNCTION__ << std::endl;
 
-    //constexpr size_t VECTOR_SIZE = 10'000'000; // 10 millions
-    constexpr size_t VECTOR_SIZE = 1'000'000; // 1 million
+    //constexpr std::size_t VECTOR_SIZE = 10'000'000; // 10 millions
+    constexpr std::size_t VECTOR_SIZE = 1'000'000; // 1 million
 
     // Align alloc
-    constexpr size_t alignment = 64; // Use max align for AVX-512
+    constexpr std::size_t alignment = 64; // Use max align for AVX-512
     float* a = AlignedArrayAlloc<float>(VECTOR_SIZE, alignment);
     CheckAlign(a, alignment);
     float* b = AlignedArrayAlloc<float>(VECTOR_SIZE, alignment);

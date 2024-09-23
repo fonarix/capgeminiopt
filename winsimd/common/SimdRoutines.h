@@ -1,7 +1,6 @@
 #pragma once
 
-#include <intrin.h>
-
+#include <emmintrin.h>
 #include <xmmintrin.h>
 #include <pmmintrin.h>
 #include <immintrin.h> // 256, 512
@@ -10,8 +9,10 @@
 #include <intrin.h>
 #include <malloc.h>
 #else
-#include <x86intrin.h>
+//#include <x86intrin.h>
+//#include <x64intrin.h>
 #include <mm_malloc.h> //
+#include <cstdint>
 #endif
 
 
@@ -22,7 +23,7 @@
  *
  */
 template <typename T>
-inline void AddVecLoop(const T* inArrry1, const T* inArrry2, T* inDest, size_t inSize)
+inline void AddVecLoop(const T* inArrry1, const T* inArrry2, T* inDest, std::size_t inSize)
 {
     for (size_t i = 0; i < inSize; ++i)
     {
@@ -31,7 +32,7 @@ inline void AddVecLoop(const T* inArrry1, const T* inArrry2, T* inDest, size_t i
 }
 
 template <typename T>
-inline float VecDotPlain(const T* inArrry1, const T* inArrry2, size_t inSize)
+inline float VecDotPlain(const T* inArrry1, const T* inArrry2, std::size_t inSize)
 {
     float result = 0.0f;
     for (size_t i = 0; i < inSize; ++i)
@@ -66,9 +67,9 @@ inline void AddVec4Int32SSEu(const std::int32_t* pa, const std::int32_t* pb, std
     _mm_storeu_si128((__m128i*)pdest, c);
 }
 
-inline void AddVecInt32SSEu(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32SSEu(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 4 <= size; i += 4) {
         AddVec4Int32SSEu(&pa[i], &pb[i], &pdest[i]);
     }
@@ -103,9 +104,9 @@ inline void AddVec4Int32SSE(const std::int32_t* pa, const std::int32_t* pb, std:
     _mm_store_si128((__m128i*)pdest, c);
 }
 
-inline void AddVecInt32SSE(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32SSE(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 4 <= size; i += 4) {
         AddVec4Int32SSE(&pa[i], &pb[i], &pdest[i]);
     }
@@ -146,9 +147,9 @@ inline void AddVec2DoubleSSEu(const double* pa, const double* pb, double* pdest)
     _mm_storeu_pd(pdest, vc);
 }
 
-inline void AddVecFloatSSEu(const float* pa, const float* pb, float* pdest, size_t size)
+inline void AddVecFloatSSEu(const float* pa, const float* pb, float* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 4 <= size; i += 4)
     {
         AddVec4FloatSSEu(&pa[i], &pb[i], &pdest[i]);
@@ -171,7 +172,7 @@ inline float _mm128_reduce_add_ps(__m128 sum)
 // Dot product of 4 floats
 inline float VecDotProduct4FloatSSEu(const float* pa, const float* pb) {
     //https://github.com/srinathv/ImproveHpc/blob/master/intel/2015-compilerSamples/C%2B%2B/intrinsic_samples/intrin_dot_sample.c
-    size_t i = 0;
+    std::size_t i = 0;
     __m128 va = _mm_loadu_ps(&pa[i]);    // Load 4 floats from a
     __m128 vb = _mm_loadu_ps(&pb[i]);    // Load 4 floats from b
     __m128 pr = _mm_mul_ps(va, vb);     // Multiply the elements
@@ -180,9 +181,9 @@ inline float VecDotProduct4FloatSSEu(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using SSE instructions (128-bit)
-inline float VecDotRetFloatSSEu(const float* pa, const float* pb, size_t size)
+inline float VecDotRetFloatSSEu(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m128 sum = _mm_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -228,9 +229,9 @@ inline void AddVec2DoubleSSE(const double* pa, const double* pb, double* pdest)
     _mm_store_pd(pdest, vc);
 }
 
-inline void AddVecFloatSSE(const float* pa, const float* pb, float* pdest, size_t size)
+inline void AddVecFloatSSE(const float* pa, const float* pb, float* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 4 <= size; i += 4)
     {
         AddVec4FloatSSE(&pa[i], &pb[i], &pdest[i]);
@@ -244,7 +245,7 @@ inline void AddVecFloatSSE(const float* pa, const float* pb, float* pdest, size_
 // Dot product of 4 floats
 inline float VecDotProduct4FloatSSE(const float* pa, const float* pb) {
     //https://github.com/srinathv/ImproveHpc/blob/master/intel/2015-compilerSamples/C%2B%2B/intrinsic_samples/intrin_dot_sample.c
-    size_t i = 0;
+    std::size_t i = 0;
     __m128 va = _mm_load_ps(&pa[i]);    // Load 4 floats from a
     __m128 vb = _mm_load_ps(&pb[i]);    // Load 4 floats from b
     __m128 pr = _mm_mul_ps(va, vb);     // Multiply the elements
@@ -253,9 +254,9 @@ inline float VecDotProduct4FloatSSE(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using SSE instructions (128-bit)
-inline float VecDotRetFloatSSE(const float* pa, const float* pb, size_t size)
+inline float VecDotRetFloatSSE(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m128 sum = _mm_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -295,9 +296,9 @@ inline void AddVec8Int32AVXu(const std::int32_t* pa, const std::int32_t* pb, std
     _mm256_storeu_si256((__m256i*)pdest, c);
 }
 
-inline void AddVecInt32AVXu(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32AVXu(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 8 <= size; i += 8) {
         AddVec8Int32AVXu(&pa[i], &pb[i], &pdest[i]);
     }
@@ -319,9 +320,9 @@ inline void AddVec8Int32AVX(const std::int32_t* pa, const std::int32_t* pb, std:
     _mm256_store_si256((__m256i*)pdest, c);
 }
 
-inline void AddVecInt32AVX(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32AVX(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 8 <= size; i += 8) {
         AddVec8Int32AVX(&pa[i], &pb[i], &pdest[i]);
     }
@@ -353,7 +354,7 @@ inline float _mm256_reduce_add_ps(__m256 sum)
 // Dot product of 8 floats
 inline float VecDotProduct8FloatAVXu(const float* pa, const float* pb) {
     //https://github.com/srinathv/ImproveHpc/blob/master/intel/2015-compilerSamples/C%2B%2B/intrinsic_samples/intrin_dot_sample.c
-    size_t i = 0;
+    std::size_t i = 0;
     __m256 va = _mm256_loadu_ps(&pa[i]);
     __m256 vb = _mm256_loadu_ps(&pb[i]);
     __m256 pr = _mm256_mul_ps(va, vb);          // Multiply the elements
@@ -362,9 +363,9 @@ inline float VecDotProduct8FloatAVXu(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using AVX-512 instructions (512-bit)
-float VecDotRetFloatAVXu(const float* pa, const float* pb, size_t size)
+float VecDotRetFloatAVXu(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 sum = _mm512_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -403,9 +404,9 @@ inline void AddVec8FloatAVX(const float* pa, const float* pb, float* pdest)
     _mm256_store_ps(pdest, vc);
 }
 
-inline void AddVecFloatAVX(const float* pa, const float* pb, float* pdest, size_t size)
+inline void AddVecFloatAVX(const float* pa, const float* pb, float* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 8 <= size; i += 8)
     {
         AddVec8FloatAVX(&pa[i], &pb[i], &pdest[i]);
@@ -419,7 +420,7 @@ inline void AddVecFloatAVX(const float* pa, const float* pb, float* pdest, size_
 // Dot product of 8 floats
 inline float VecDotProduct8FloatAVX(const float* pa, const float* pb) {
     //https://github.com/srinathv/ImproveHpc/blob/master/intel/2015-compilerSamples/C%2B%2B/intrinsic_samples/intrin_dot_sample.c
-    size_t i = 0;
+    std::size_t i = 0;
     __m256 va = _mm256_load_ps(&pa[i]);
     __m256 vb = _mm256_load_ps(&pb[i]);
     __m256 pr = _mm256_mul_ps(va, vb);          // Multiply the elements
@@ -428,9 +429,9 @@ inline float VecDotProduct8FloatAVX(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using AVX-512 instructions (512-bit)
-float VecDotRetFloatAVX(const float* pa, const float* pb, size_t size)
+float VecDotRetFloatAVX(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 sum = _mm512_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -472,9 +473,9 @@ inline void AddVec16Int32AVX512u(const std::int32_t* pa, const std::int32_t* pb,
     _mm512_storeu_si512((__m512i*)pdest, c);
 }
 
-inline void AddVecInt32AVX512u(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32AVX512u(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 16 <= size; i += 16)
     {
         AddVec16Int32AVX512u(&pa[i], &pb[i], &pdest[i]);
@@ -497,9 +498,9 @@ inline void AddVec16Int32AVX512(const std::int32_t* pa, const std::int32_t* pb, 
     _mm512_store_si512((__m512i*)pdest, c);
 }
 
-inline void AddVecInt32AVX512(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, size_t size)
+inline void AddVecInt32AVX512(const std::int32_t* pa, const std::int32_t* pb, std::int32_t* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 16 <= size; i += 16)
     {
         AddVec16Int32AVX512(&pa[i], &pb[i], &pdest[i]);
@@ -524,9 +525,9 @@ inline void AddVec16FloatAVX512u(const float* pa, const float* pb, float* pdest)
     _mm512_storeu_ps(pdest, vc);
 }
 
-inline void AddVecFloatAVX512u(const float* pa, const float* pb, float* pdest, size_t size)
+inline void AddVecFloatAVX512u(const float* pa, const float* pb, float* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 16 <= size; i += 16)
     {
         AddVec16FloatAVX512u(&pa[i], &pb[i], &pdest[i]);
@@ -539,7 +540,7 @@ inline void AddVecFloatAVX512u(const float* pa, const float* pb, float* pdest, s
 
 // Dot product ofr 16 floats
 inline float VecDotProduct16FloatAVX512u(const float* pa, const float* pb) {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 va = _mm512_loadu_ps(&pa[i]);
     __m512 vb = _mm512_loadu_ps(&pb[i]);
     __m512 pr = _mm512_mul_ps(va, vb);          // Multiply the elements
@@ -548,9 +549,9 @@ inline float VecDotProduct16FloatAVX512u(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using AVX-512 instructions (512-bit)
-float VecDotRetFloatAVX512u(const float* pa, const float* pb, size_t size)
+float VecDotRetFloatAVX512u(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 sum = _mm512_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -589,9 +590,9 @@ inline void AddVec16FloatAVX512(const float* pa, const float* pb, float* pdest)
     _mm512_store_ps(pdest, vc);
 }
 
-inline void AddVecFloatAVX512(const float* pa, const float* pb, float* pdest, size_t size)
+inline void AddVecFloatAVX512(const float* pa, const float* pb, float* pdest, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     for (; i + 16 <= size; i += 16)
     {
         AddVec16FloatAVX512(&pa[i], &pb[i], &pdest[i]);
@@ -604,7 +605,7 @@ inline void AddVecFloatAVX512(const float* pa, const float* pb, float* pdest, si
 
 // Dot product ofr 16 floats
 inline float VecDotProduct16FloatAVX512(const float* pa, const float* pb) {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 va = _mm512_load_ps(&pa[i]);
     __m512 vb = _mm512_load_ps(&pb[i]);
     __m512 pr = _mm512_mul_ps(va, vb);          // Multiply the elements
@@ -613,9 +614,9 @@ inline float VecDotProduct16FloatAVX512(const float* pa, const float* pb) {
 }
 
 // Function to compute dot product using AVX-512 instructions (512-bit)
-float VecDotRetFloatAVX512(const float* pa, const float* pb, size_t size)
+float VecDotRetFloatAVX512(const float* pa, const float* pb, std::size_t size)
 {
-    size_t i = 0;
+    std::size_t i = 0;
     __m512 sum = _mm512_setzero_ps();
 
     // Process elements in chunks of 16 floats (512 bits)
@@ -642,7 +643,7 @@ float VecDotRetFloatAVX512(const float* pa, const float* pb, size_t size)
     return result;
 }
 
-void Mat4x4MultFloatAVX512(const float* pa, const float* pb, const float* pret, size_t size)
+void Mat4x4MultFloatAVX512(const float* pa, const float* pb, const float* pret, std::size_t size)
 {
 
 }
