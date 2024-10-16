@@ -3,6 +3,7 @@
 
 # Build folders:
 winsimd/build
+cuda/build
 
 # Prerequisites
 *.d
