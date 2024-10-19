@@ -41,8 +41,15 @@ std::string arrayToStr(T(&inArray)[size])
 
 }
 
+/* Registrers per thread: nvcc --ptxas-options=-v kernel.cu
+ * cudaOccupancyMaxActiveBlocksPerMultiprocessor
+ *
+ */
+
 std::string GetDevicePropToString(cudaDeviceProp inDevProp)
 {
+    //https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#features-and-technical-specifications-technical-specifications-per-compute-capability
+
     std::stringstream ss;
 
     ss << "\nDevice name....: " << inDevProp.name;
@@ -297,3 +304,9 @@ float CudaEventTimer::Stop()
     mErr = cudaEventElapsedTime(&elapsed_time_ms, mStartEvent.GetEvent(), mStopEvent.GetEvent());
     return elapsed_time_ms;
 }
+
+
+
+
+/*
+ */

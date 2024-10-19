@@ -49,7 +49,7 @@ void AddVectorsGpu(const std::size_t itemsCount)
     float* d_a, * d_b, * d_c;
 
     CudaEventTimer cudaTimer;
-    CTimerMicroseconds chronoTimer;
+    CTimerMilliseconds chronoTimer;
     cudaTimer.Start();
 
     // Allocate memory on devjice
@@ -77,7 +77,7 @@ void AddVectorsGpu(const std::size_t itemsCount)
     vectorAdd <<<blocksPerGrid, threadsPerBlock>>> (d_a, d_b, d_c, itemsCount);
 
     std::cout << std::endl << "GPU timer: " << cudaTimer.Stop() << " milliseconds";
-    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " microseconds";
+    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " milliseconds";
 
     // Copy results from device to host
     errRet = cudaMemcpy(host_c.data(), d_c, size, cudaMemcpyDeviceToHost);
@@ -108,7 +108,7 @@ void AddVectorsCpu(const std::size_t itemsCount)
     host_c.reserve(itemsCount);
 
     std::cout << std::endl << "CPU add vectors:";
-    CTimerMicroseconds chronoTimer;
+    CTimerMilliseconds chronoTimer;
     chronoTimer.Start();
 
     std::transform(host_a.begin(), host_a.end(), host_b.begin(), std::back_inserter(host_c), [](float a_, float b_)
@@ -116,7 +116,7 @@ void AddVectorsCpu(const std::size_t itemsCount)
             return a_ + b_;
         });
 
-    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " microseconds";
+    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " milliseconds";
     std::cout << std::endl << "CPU array average: " <<  VectorMean(host_c) << "";
 
     PrintFirstElements(host_a, host_b, host_c, 10);
@@ -125,7 +125,7 @@ void AddVectorsCpu(const std::size_t itemsCount)
 
 int main()
 {
-    const std::size_t itemsCount = 1000000000;
+    const std::size_t itemsCount = 100000000;
     AddVectorsGpu(itemsCount);
     AddVectorsCpu(itemsCount);
 

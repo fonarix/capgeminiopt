@@ -1,4 +1,6 @@
 # build
+# Run this:
+#cmake -G "Visual Studio 16 2019" -A x64
 cmake_minimum_required (VERSION 3.20)
 project("cudatasks" LANGUAGES CXX CUDA)
 #cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
@@ -12,6 +14,7 @@ enable_testing()
 set(CMAKE_CXX_STANDART 17)
 set(CMAKE_CXX_STANDART_REQUIRED ON)
 
+#set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1/bin/nvcc")
 
 #[[
 include(ExternalProject)

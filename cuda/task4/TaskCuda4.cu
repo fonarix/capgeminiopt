@@ -29,13 +29,13 @@ void MeasureThrustSort(std::size_t count)
 
     CudaEventTimer cudaTimer;
     cudaTimer.Start();
-    CTimerMicroseconds chronoTimer;
+    CTimerMilliseconds chronoTimer;
     chronoTimer.Start();
 
     // Sort data on the device.
     thrust::sort(d_vec.begin(), d_vec.end());
 
-    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " microseconds";
+    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " milliseconds";
     std::cout << std::endl << "GPU timer: " << cudaTimer.Stop() << " milliseconds";
 
     // Transfer data back to host.
@@ -69,13 +69,13 @@ void MeasureCpuStdSort(std::size_t count)
 
     std::cout << std::endl << "Run std::sort... " << count << " elements";
 
-    CTimerMicroseconds chronoTimer;
+    CTimerMilliseconds chronoTimer;
     chronoTimer.Start();
 
     // Sort data on the host.
     std::sort(host_vec.begin(), host_vec.end());
 
-    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " microseconds";
+    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " milliseconds";
 
     PrintFirstArrayElements(host_vec.data(), 15);
 }
@@ -90,13 +90,13 @@ void MeasureCpuInsertionSort(std::size_t count)
 
     std::cout << std::endl << "Run insertion sort... " << count << " elements";
 
-    CTimerMicroseconds chronoTimer;
+    CTimerMilliseconds chronoTimer;
     chronoTimer.Start();
 
     // Sort data on the host.
     insertionSort(host_vec.data(), host_vec.size());
 
-    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " microseconds";
+    std::cout << std::endl << "CPU timer: " << chronoTimer.GetElapsed().count() << " milliseconds";
 
     PrintFirstArrayElements(host_vec.data(), 15);
 }
